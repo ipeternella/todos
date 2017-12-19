@@ -15,7 +15,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>1.5.9.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
@@ -40,16 +40,53 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-mongodb</artifactId>
 		</dependency>
+		
+		<!-- Spock framework for testing -->
+		<dependency>
+			<groupId>org.spockframework</groupId>
+			<artifactId>spock-spring</artifactId>
+		</dependency>
+		
+		<!-- Groovy for testing -->
+		<dependency>
+		      <groupId>org.codehaus.groovy</groupId>
+		      <artifactId>groovy-all</artifactId>		     
+   		</dependency>		
 	</dependencies>
 
 	<build>
-		<plugins>
+		<plugins>			
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+	
+			<!-- GMavenPlus plugin to compile Groovy/Java code together and run tests -->
+			<plugin>
+				<groupId>org.codehaus.gmavenplus</groupId>
+				<artifactId>gmavenplus-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<goals>
+			              <goal>addSources</goal>
+			              <goal>addTestSources</goal>
+			              <goal>generateStubs</goal>
+			              <goal>compile</goal>
+			              <goal>generateTestStubs</goal>
+			              <goal>compileTests</goal>
+			              <goal>removeStubs</goal>
+			              <goal>removeTestStubs</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</build>
-
 
 </project>
