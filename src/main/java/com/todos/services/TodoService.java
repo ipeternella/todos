@@ -14,7 +14,7 @@ public class TodoService {
 	
 	public Todo create(Todo todo) {
 		Todo createdTodo = todoRepo.save(todo);
-		
+						
 		return createdTodo;
 	}
 }

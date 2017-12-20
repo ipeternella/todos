@@ -11,4 +11,5 @@ import com.todos.domain.Todo;
 public interface TodoRepository extends MongoRepository<Todo, String> {
 	
 	public List<Todo> findByUser(String user);
+	
 }
