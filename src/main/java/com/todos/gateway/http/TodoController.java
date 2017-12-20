@@ -1,26 +1,30 @@
 package com.todos.gateway.http;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.todos.domain.Todo;
-import com.todos.usecases.CrudTodo;
-
-// calls CrudTodos 
+import com.todos.services.TodoService;
 
 @RestController
-@RequestMapping(value="/todos")
+@RequestMapping(value="/todos") 
 public class TodoController {
 	
-//	@Autowired
-//	CrudTodo crudTodo; 
-	
-	@RequestMapping(method=RequestMethod.GET)
-	public Todo test() {
-		Todo todo = new Todo("abc", "igor", "Wash the dishes", false);
+	@Autowired
+	private TodoService todoService;
 		
-		return todo;
-	}
+	@RequestMapping(method=RequestMethod.POST, 
+					consumes=MediaType.APPLICATION_JSON_VALUE,
+					produces = MediaType.APPLICATION_JSON_VALUE)
+	public Todo createTodo(@RequestBody Todo inputTodo) {
+		System.out.println("Creating todo...");
+		System.out.println(inputTodo);
+		
+		Todo createdTodo = todoService.create(inputTodo);
+				
+		return createdTodo;
+	}	
 }

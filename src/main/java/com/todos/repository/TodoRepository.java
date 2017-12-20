@@ -1,9 +1,14 @@
 package com.todos.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import java.util.List;
+
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
 import com.todos.domain.Todo;
 
-// must reach mongoDB
-public interface TodoRepository extends CrudRepository<Todo, String>{
-
+@Repository
+public interface TodoRepository extends MongoRepository<Todo, String> {
+	
+	public List<Todo> findByUser(String user);
 }
