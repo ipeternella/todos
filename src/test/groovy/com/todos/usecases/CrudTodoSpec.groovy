@@ -9,36 +9,83 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 
 class CrudTodoSpec extends Specification {
-		
-	def "Test CrudTodo class" () {
-	    TodoService todoService = Mock(TodoService)
-		CrudTodo crudTodo = new CrudTodo(todoService: todoService)
+
+	/**
+	* CREATE CRUD operation
+	*/
+	def "Test CRUD class - CREATE operation" () {
 	
-		when: "I call crudTodo.create()"		
-			Todo dummyTodo = getDummyTodo()
+    		TodoService todoService = Mock(TodoService) // mocks service that calls the repository layer
+		TodoRepository todoRepo = Mock(TodoRepository) // mocks the repository layer
+		CrudTodo crudTodo = new CrudTodo(todoService: todoService)
+		
+		when: "I call crudTodo.create() [usecase layer]"
+		
+			// dummy todo for database insert							
+			Todo dummyTodo = getDummyTodo() 
+			
+			// crudTodo.create() should invoke service.create()
 			Todo createdTodo = crudTodo.create(dummyTodo)
 							
 		then: "Should invoke service.create()"
-			1 * todoService.create(_) >> dummyTodo // crudTodo.create() should invoke service.create() 
+		
+			1 * todoService.create(_) >> dummyTodo 
 			
 		and: "Should match the dummy Todo"
+		
 			assert createdTodo != null
 			assert createdTodo.getId() == "000"			
 			assert createdTodo.getUser() == "someone u dunno"
 			assert createdTodo.getTask() == "walk the dog, dude!"
-			assert createdTodo.isCompleted() == false		 
-	}
-	
-	def "Test TodoService class" () {
-		TodoRepository todoRepo = Mock(TodoRepository)
-		TodoService todoService = new TodoService(todoRepo: todoRepo)
-				
-		when: "I call todoService.create()"
-			Todo dummyTOdo = getDummyTodo() 
-			todoService.create(dummyTodo)
+			assert createdTodo.isCompleted() == false 
 			
-		then: "should invoke MongoRepository.save()"
-			1 * todoRepo.save(_)  
+		when: "I call todoService.create() [service layer]"
+		
+			// creates a non mock service with a mocked repository object
+			todoService = new TodoService(todoRepo: todoRepo)
+			
+			// todoService.create() should invoke todoRepo.save()
+			todoService.create(dummyTodo)
+		
+		then: "Should call todoRepo.save()"
+		
+			1 * todoRepo.save(_)
+						  				 
+	}
+		
+	/** 
+	* READ operation
+	*/ 
+	def "Test CRUD class - READ operation" () {
+	
+    		TodoService todoService = Mock(TodoService) // mocks service that calls the repository layer
+		TodoRepository todoRepo = Mock(TodoRepository) // mocks the repository layer
+		CrudTodo crudTodo = new CrudTodo(todoService: todoService)
+		
+		// fake id
+		String id = "1"
+		
+		when: "I call crudTodo.findById() [usecase layer]"
+						
+			// crudTodo.create() should invoke service.findById()
+			Todo createdTodo = crudTodo.findById(id)
+							
+		then: "Should invoke service.findById()"
+			
+			1 * todoService.findById(_) 
+			
+		when: "I call todoService.findById() [service layer]"
+		
+			// creates a non mock service with a mocked repository object
+			todoService = new TodoService(todoRepo: todoRepo)
+			
+			// todoService.findById() should invoke todoRepo.findById()
+			todoService.findById(id)
+		
+		then: "Should call todoRepo.save()"
+				
+			1 * todoRepo.findById(_)
+						  				 
 	}
 			
 	def getDummyTodo() {		

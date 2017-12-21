@@ -10,12 +10,10 @@ import com.todos.repository.TodoRepository;
 public class TodoService { 
 
 	// logic of the application
-	
 	@Autowired
 	private TodoRepository todoRepo;
 	
-	public Todo create(Todo todo) {
-		
+	public Todo create(Todo todo) {		
 		try {			
 			Todo createdTodo = todoRepo.save(todo);
 			
@@ -24,7 +22,6 @@ public class TodoService {
 			System.out.println("[ERROR] MongoDB connection problem: " + e.getMessage());
 			
 			throw (e);
-		} 
-		
+		} 		
 	}
 }

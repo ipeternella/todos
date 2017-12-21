@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.todos.domain.Todo;
 import com.todos.usecase.CrudTodo;
 
-
 @RestController
 @RequestMapping(value="/todos") 
 public class TodoController {
@@ -29,5 +28,6 @@ public class TodoController {
 		System.out.println("[LOG] Created Todo in the database: " + createdTodo);
 
 		return new ResponseEntity<>(createdTodo, HttpStatus.CREATED);		
-	}	
+	}
+		
 }
