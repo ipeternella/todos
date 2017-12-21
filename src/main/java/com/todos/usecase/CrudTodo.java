@@ -19,4 +19,10 @@ public class CrudTodo {
 		return createdTodo;
 	}
 	
+	public Todo findById(String todoId) {
+		Todo foundTodo = todoService.findById(todoId);
+		
+		return foundTodo;
+	}
+	
 }

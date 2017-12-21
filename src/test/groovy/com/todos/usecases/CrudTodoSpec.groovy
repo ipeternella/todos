@@ -63,12 +63,12 @@ class CrudTodoSpec extends Specification {
 		CrudTodo crudTodo = new CrudTodo(todoService: todoService)
 		
 		// fake id
-		String id = "1"
+		String todoId = "5a3aedba63904306ca3f63a4"
 		
 		when: "I call crudTodo.findById() [usecase layer]"
 						
 			// crudTodo.create() should invoke service.findById()
-			Todo createdTodo = crudTodo.findById(id)
+			Todo createdTodo = crudTodo.findById(todoId)
 							
 		then: "Should invoke service.findById()"
 			
@@ -79,10 +79,10 @@ class CrudTodoSpec extends Specification {
 			// creates a non mock service with a mocked repository object
 			todoService = new TodoService(todoRepo: todoRepo)
 			
-			// todoService.findById() should invoke todoRepo.findById()
-			todoService.findById(id)
+			// todoService.findById() should invoke todoRepo.findById()			
+			todoService.findById(todoId)
 		
-		then: "Should call todoRepo.save()"
+		then: "Should call todoRepo.findById()"
 				
 			1 * todoRepo.findById(_)
 						  				 

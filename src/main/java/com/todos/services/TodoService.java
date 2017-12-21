@@ -1,5 +1,6 @@
 package com.todos.services;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,21 @@ public class TodoService {
 			
 			return createdTodo;			
 		} catch (DataAccessException e) {			
-			System.out.println("[ERROR] MongoDB connection problem: " + e.getMessage());
+			System.out.println("[ERROR]: " + e.getMessage());
 			
 			throw (e);
 		} 		
+	}
+
+	public Todo findById(String todoId) throws DataAccessException {
+		try {
+			Todo foundTodo = todoRepo.findById(new ObjectId(todoId));
+			
+			return foundTodo;
+		} catch (DataAccessException e) {
+			System.out.println("[ERROR]: " + e.getMessage());
+			
+			throw(e);
+		}
 	}
 }
