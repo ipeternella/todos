@@ -72,19 +72,7 @@ class CrudTodoSpec extends Specification {
 							
 		then: "Should invoke service.findById()"
 			
-			1 * todoService.findById(_) 
-			
-		when: "I call todoService.findById() [service layer]"
-		
-			// creates a non mock service with a mocked repository object
-			todoService = new TodoService(todoRepo: todoRepo)
-			
-			// todoService.findById() should invoke todoRepo.findById()			
-			todoService.findById(todoId)
-		
-		then: "Should call todoRepo.findById()"
-				
-			1 * todoRepo.findById(_)
+			1 * todoService.findById(_) 			
 						  				 
 	}
 			

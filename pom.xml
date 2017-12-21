@@ -73,6 +73,12 @@
 			<version>3.1.0</version>
 		</dependency>
 		
+		<!-- Jackson for JSON parsing/encoding -->
+		<dependency>
+   			<groupId>com.fasterxml.jackson.datatype</groupId>
+   			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
