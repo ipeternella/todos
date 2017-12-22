@@ -24,7 +24,8 @@
 		<java.version>1.8</java.version>
 	</properties>
 
-	<dependencies>
+	<dependencies>	
+		<!-- Spring boot dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -56,11 +57,15 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
+		
+		<!-- Spock requirement for mocking -->
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib-nodep</artifactId>
 			<version>3.2.5</version>
 		</dependency>
+		
+		<!-- Lombok to dry code -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -79,6 +84,29 @@
    			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
 		
+		<!-- In-memory MongoDB for testing -->		
+		<dependency>
+		    <groupId>de.flapdoodle.embed</groupId>
+		    <artifactId>de.flapdoodle.embed.mongo</artifactId>
+		</dependency>
+				
+		<dependency>
+		    <groupId>cz.jirutka.spring</groupId>
+		    <artifactId>embedmongo-spring</artifactId>
+		    <version>RELEASE</version>
+		</dependency>
+					
+		<dependency>
+		  <groupId>com.google.guava</groupId>
+		  <artifactId>guava</artifactId>
+		  <version>23.6-jre</version>
+		</dependency>
+					
+		<!-- MongoDB integration with Spring -->
+		<dependency>
+		   <groupId>org.springframework.boot</groupId>
+		   <artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

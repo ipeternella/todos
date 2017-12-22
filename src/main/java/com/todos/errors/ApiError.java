@@ -6,6 +6,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Class that is used to generated customized JSON messages to users when exceptions occur.
+ * 
+ * @author igp
+ */
+
 public class ApiError {
 	
 	@Getter @Setter private HttpStatus status;        	 // HTTP status

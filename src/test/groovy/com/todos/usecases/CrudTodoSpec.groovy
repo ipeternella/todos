@@ -8,6 +8,12 @@ import com.todos.usecase.CrudTodo
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 
+/**
+* Unit tests for the CRUD functionalities. Used for TDD development.
+*
+* @author igp
+*/
+
 class CrudTodoSpec extends Specification {
 
 	/**
@@ -63,7 +69,7 @@ class CrudTodoSpec extends Specification {
 		CrudTodo crudTodo = new CrudTodo(todoService: todoService)
 		
 		// fake id
-		String todoId = "5a3aedba63904306ca3f63a4"
+		String todoId = "1"
 		
 		when: "I call crudTodo.findById() [usecase layer]"
 						

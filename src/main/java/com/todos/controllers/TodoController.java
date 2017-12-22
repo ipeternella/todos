@@ -5,6 +5,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,11 @@ import com.todos.domain.Todo;
 import com.todos.errors.EntityNotFoundException;
 import com.todos.usecase.CrudTodo;
 
+/**
+ * Controller for the CRUD operations of the todos.
+ * @author igp
+ */
+
 @RestController
 @RequestMapping(value="/todos") 
 public class TodoController {
@@ -21,22 +27,35 @@ public class TodoController {
 	@Autowired
 	private CrudTodo crudTodo;
 	
+	/*
+	 * CREATE (CRUD) endpoint.
+	 */	
 	@RequestMapping(method=RequestMethod.POST, 
 					consumes=MediaType.APPLICATION_JSON_VALUE,
 					produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> create(@RequestBody Todo inputTodo) throws DataAccessException {
-							
+	public ResponseEntity<Object> create(@RequestBody Todo inputTodo) throws DataAccessException, HttpMessageNotReadableException {
+		// usecase to perform the create operation of the todo
+		// malformed JSONs will throw HttpMessageNotReadableException which is handled by the error handler
 		Todo createdTodo = crudTodo.create(inputTodo);
+		
+		// logging
 		System.out.println("[LOG] Created Todo in the database: " + createdTodo);
 
+		// if the operation was successful, returns the newly created todo
 		return new ResponseEntity<>(createdTodo, HttpStatus.CREATED);		
 	}
 	
+	/*
+	 * READ one (CRUD) endpoint.
+	 */
 	@RequestMapping(value = "/{todoId}", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> findById(@PathVariable(value="todoId") String todoId) throws DataAccessException, EntityNotFoundException {
+	public ResponseEntity<Object> findById(@PathVariable(value="todoId") String todoId) throws DataAccessException, EntityNotFoundException {		
+		// usecase to perform the read operation based on the id given by the path variable
+		// throws custom EntityNotFoundException to return 404 http status if no todo was found in mongoDB
 		Todo foundTodo = crudTodo.findById(todoId);
 		
+		// if the operation was successful, returns the found todo
 		return new ResponseEntity<>(foundTodo, HttpStatus.OK);
-	}	
+	}
 	
 }

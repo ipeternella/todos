@@ -14,7 +14,8 @@ import com.todos.errors.EntityNotFoundException;
 
 /**
  * Class to handle Exceptions that are thrown by the controllers.
- * @author schaulerfuchs
+ * 
+ * @author igp
  */
 
 @ControllerAdvice
@@ -24,25 +25,38 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(apiError, apiError.getStatus());
     }
 	
+	/*
+	 * Handles malformed JSONs sent by API users.
+	 */	
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable (HttpMessageNotReadableException ex, 
 																   HttpHeaders headers, HttpStatus status, 
 																   WebRequest request) {
-		String error = "Malformed JSON request :(";
+		String friendlyErrorMsg = "Malformed JSON request :(";
 		
-		return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, ex));
+		return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, friendlyErrorMsg, ex));
 	}
-			
+		
+	/*
+	 * Handles database-related exceptions.
+	 */
 	@ExceptionHandler(DataAccessException.class)
 	protected ResponseEntity<Object> handleDataAccessException(DataAccessException ex) {
-		ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY, "Something's wrong with our database :(", ex);
+		String friendlyErrorMsg = "Something's wrong with our database :(";
+		
+		ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY, friendlyErrorMsg, ex);
 		
 		return buildResponseEntity(apiError);
 	}
 	
+	/*
+	 * Handles exceptions raised when nothing was found in the database.
+	 */
 	@ExceptionHandler(EntityNotFoundException.class)
 	protected ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex) {
-		ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, "Could not find what you were looking for :(", ex);
+		String friendlyErrorMsg = "Could not find what you were looking for :(";
+		
+		ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, friendlyErrorMsg, ex);
 		
 		return buildResponseEntity(apiError);
 	}
