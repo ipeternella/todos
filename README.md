@@ -1,4 +1,4 @@
-# ToDo's API - Never forget anything anymore anywhere!
+# ToDo's API - Never forget anything anywhere anymore!
 * This demo project implements a RESTful API that allow users to manage their daily life tasks (To-Dos).
 
 ## Spring Powered
