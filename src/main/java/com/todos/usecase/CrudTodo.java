@@ -51,4 +51,20 @@ public class CrudTodo {
 		return todoList;
 	}
 	
+	/*
+	 * DELETE one todo operation.
+	 */
+	public void delete(String todoId) throws DataAccessException, EntityNotFoundException {
+		// uses todo service to delete a todo which returns void
+		todoService.delete(todoId);		
+	}
+	
+	/*
+	 * UPDATE one todo operation.
+	 */
+	public Todo update(Todo todoUpdate) throws DataAccessException, EntityNotFoundException {
+		Todo updatedTodo = todoService.update(todoUpdate);
+		
+		return updatedTodo;
+	}
 }

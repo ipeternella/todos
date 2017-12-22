@@ -36,7 +36,7 @@ public class TodoController {
 	@RequestMapping(method = RequestMethod.POST, 
 					consumes = MediaType.APPLICATION_JSON_VALUE,
 					produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> create(@RequestBody Todo inputTodo) throws DataAccessException, HttpMessageNotReadableException {
+	public ResponseEntity<Todo> create(@RequestBody Todo inputTodo) throws DataAccessException, HttpMessageNotReadableException {
 		// usecase to perform the create operation of the todo
 		// malformed JSONs will throw HttpMessageNotReadableException which is handled by the error handler
 		Todo createdTodo = crudTodo.create(inputTodo);
@@ -54,7 +54,7 @@ public class TodoController {
 	@RequestMapping(value = "/{todoId}", 
 					method = RequestMethod.GET, 
 					produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> findById(@PathVariable(value="todoId") String todoId) throws DataAccessException, EntityNotFoundException {		
+	public ResponseEntity<Todo> findById(@PathVariable(value="todoId") String todoId) throws DataAccessException, EntityNotFoundException {		
 		// usecase to perform the read operation based on the id given by the path variable
 		// throws custom EntityNotFoundException to return 404 http status if no todo was found in mongoDB
 		Todo foundTodo = crudTodo.findById(todoId);
@@ -68,7 +68,7 @@ public class TodoController {
 	 */
 	@RequestMapping(method = RequestMethod.GET,
 					produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> findAll() throws DataAccessException, EntityNotFoundException {
+	public ResponseEntity<List<Todo>> findAll() throws DataAccessException, EntityNotFoundException {
 		
 		// usecase to read all the todos that are stored in mongoDB
 		// throws custom EntityNotFoundException to return 404 http status if no todo was found in mongoDB
@@ -77,4 +77,29 @@ public class TodoController {
 		return new ResponseEntity<>(todoList, HttpStatus.OK);
 	}
 	
+	/*
+	 * Delete (CRUD) endpoint.
+	 */
+	@RequestMapping(value = "/{todoId}",
+					method = RequestMethod.DELETE,
+					produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> delete(@PathVariable String todoId) throws DataAccessException, EntityNotFoundException {
+		
+		// use to delete a todo by its id
+		crudTodo.delete(todoId);
+		
+		// returns an empty body
+		return new ResponseEntity<String>("", HttpStatus.NO_CONTENT);
+	}
+	
+	/*
+	 * Update (CRUD) endpoint.
+	 */
+	@RequestMapping(method = RequestMethod.PUT,
+					produces = MediaType.APPLICATION_JSON_VALUE)				
+	public ResponseEntity<Todo> update(@RequestBody Todo todoUpdate) throws DataAccessException, EntityNotFoundException {
+		Todo updatedTodo = crudTodo.update(todoUpdate);
+		
+		return new ResponseEntity<>(updatedTodo, HttpStatus.OK);
+	}
 }
