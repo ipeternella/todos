@@ -1,9 +1,9 @@
 # ToDo's API - Never forget anything, anymore!
-* This demo project implements a RESTful API that allow users to manage their daily life tasks(To-Dos)!
+* This demo project implements a RESTful API that allow users to manage their daily life tasks (To-Dos).
 
 ## Spring Powered
 * Based on the Spring framework.
-* Implements CRUD fuctionalities for todos.
+* Implements CRUD functionalities for todos.
 * Uses mongoDB as the main database (but also has the option to run an embedded mongoDB version)
 
 ## TDD developed
