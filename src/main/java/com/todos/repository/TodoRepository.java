@@ -12,5 +12,5 @@ import com.todos.domain.Todo;
 
 @Repository
 public interface TodoRepository extends MongoRepository<Todo, String> {
-	
+
 }

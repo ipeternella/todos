@@ -1,5 +1,7 @@
 package com.todos.usecase;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,15 @@ public class CrudTodo {
 		Todo foundTodo = todoService.findById(todoId);
 				
 		return foundTodo;
+	}
+	
+	/*
+	 * READ all todos operation.
+	 */	
+	public List<Todo> findAll() throws DataAccessException, EntityNotFoundException {
+		List<Todo> todoList = todoService.findAll();
+		
+		return todoList;
 	}
 	
 }

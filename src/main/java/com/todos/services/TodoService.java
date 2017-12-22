@@ -1,4 +1,6 @@
 package com.todos.services;
+
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,7 @@ public class TodoService {
 	/*
 	 * Create todo service. 
 	 */
-	public Todo create(Todo todo) {		
+	public Todo create(Todo todo) throws DataAccessException {		
 		try {
 			
 			// inserts todo in the database by using the repository
@@ -33,17 +35,18 @@ public class TodoService {
 			
 			return createdTodo;
 			
-		} catch (DataAccessException e) {
+		} catch (DataAccessException e) { // catches database-related exceptions
 			
 			// logs database-related exception
 			System.out.println("[ERROR]: " + e.getMessage());
 			
+			// proceeds to throw the exception
 			throw (e);
 		} 		
 	}
 
 	/*
-	 * Read one todo service.
+	 * Read-one todo service.
 	 */
 	public Todo findById(String todoId) throws DataAccessException, EntityNotFoundException {
 		try {
@@ -51,9 +54,9 @@ public class TodoService {
 			// finds todo based on the path variable id
 			Todo foundTodo = todoRepo.findOne(todoId);			
 			
-			// throws custom exception if no todo was found to return 404 http status and not 200
+			// throws custom exception if no todo was found in mongoDB to return a 404 http status
 			if (foundTodo == null) {
-				throw new EntityNotFoundException("Todo was not found on the database with the id: " + todoId);
+				throw new EntityNotFoundException("Todo was not found in the database with the id: " + todoId);
 			}
 			
 			return foundTodo;
@@ -63,7 +66,35 @@ public class TodoService {
 			// logs database-related exception
 			System.out.println("[ERROR]: " + e.getMessage());
 			
+			// proceeds to throw the exception
 			throw(e);
 		}
 	}
+	
+	/*
+	 * Read-all todo service.
+	 */	
+	public List<Todo> findAll() throws DataAccessException, EntityNotFoundException {
+		try {
+			
+			// finds all todos in mongoDB
+			List<Todo> todoList = todoRepo.findAll();
+			
+			// throws custom exception if no todo was found in mongoDB to return 404 http status 
+			if (todoList.isEmpty()) {
+				throw new EntityNotFoundException("No todos found in the database, don't you have anything to do?");
+			}			
+			
+			return todoList;
+			
+		} catch (DataAccessException e) {
+			
+			// logs database-related exception
+			System.out.println("[ERROR]: " + e.getMessage());
+			
+			// proceeds to throw the exception
+			throw(e);		
+		}
+	}
+	
 }

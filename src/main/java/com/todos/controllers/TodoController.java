@@ -1,5 +1,7 @@
 package com.todos.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import com.todos.usecase.CrudTodo;
 
 /**
  * Controller for the CRUD operations of the todos.
+ * 
  * @author igp
  */
 
@@ -30,8 +33,8 @@ public class TodoController {
 	/*
 	 * CREATE (CRUD) endpoint.
 	 */	
-	@RequestMapping(method=RequestMethod.POST, 
-					consumes=MediaType.APPLICATION_JSON_VALUE,
+	@RequestMapping(method = RequestMethod.POST, 
+					consumes = MediaType.APPLICATION_JSON_VALUE,
 					produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> create(@RequestBody Todo inputTodo) throws DataAccessException, HttpMessageNotReadableException {
 		// usecase to perform the create operation of the todo
@@ -48,7 +51,9 @@ public class TodoController {
 	/*
 	 * READ one (CRUD) endpoint.
 	 */
-	@RequestMapping(value = "/{todoId}", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{todoId}", 
+					method = RequestMethod.GET, 
+					produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findById(@PathVariable(value="todoId") String todoId) throws DataAccessException, EntityNotFoundException {		
 		// usecase to perform the read operation based on the id given by the path variable
 		// throws custom EntityNotFoundException to return 404 http status if no todo was found in mongoDB
@@ -56,6 +61,20 @@ public class TodoController {
 		
 		// if the operation was successful, returns the found todo
 		return new ResponseEntity<>(foundTodo, HttpStatus.OK);
+	}
+	
+	/*
+	 * Read All (CRUD) endpoint.
+	 */
+	@RequestMapping(method = RequestMethod.GET,
+					produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> findAll() throws DataAccessException, EntityNotFoundException {
+		
+		// usecase to read all the todos that are stored in mongoDB
+		// throws custom EntityNotFoundException to return 404 http status if no todo was found in mongoDB
+		List<Todo> todoList = crudTodo.findAll();  
+		
+		return new ResponseEntity<>(todoList, HttpStatus.OK);
 	}
 	
 }
