@@ -1,4 +1,4 @@
-package com.todos.usecase;
+package com.todos.usecases;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import com.todos.services.TodoService;
  */
 
 @Service
-public class CrudTodo {
+public class TodoCRUD {
 	
 	@Autowired
 	private TodoService todoService;
@@ -25,7 +25,7 @@ public class CrudTodo {
 	/*
 	 * CREATE one todo operation.
 	 */	
-	public Todo create (Todo todo) throws DataAccessException {
+	public Todo create(Todo todo) throws DataAccessException {
 		// uses a todo service to insert the todo object into mongoDB
 		Todo createdTodo = todoService.create(todo);
 		
