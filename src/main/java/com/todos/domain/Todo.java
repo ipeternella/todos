@@ -24,12 +24,12 @@ import lombok.ToString;
 @ToString
 @Document(collection="todos") // collection specification for mongoDB
 public class Todo {
-	
-	@Id
-	private String id; // _id field for mongoDB
+    
+    @Id
+    private String id; // _id field for mongoDB
 
-	private String user;
-	private String task;
-	private boolean completed;
-		
+    private String user;
+    private String task;
+    private boolean completed;
+        
 }

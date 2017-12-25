@@ -16,7 +16,7 @@ import cz.jirutka.spring.embedmongo.EmbeddedMongoFactoryBean;
 
 @Configuration
 public class MongoConfig {
-	
+    
     private static final String MONGO_DB_URL = "localhost";
     private static final String MONGO_DB_NAME = "todos_test";
     
