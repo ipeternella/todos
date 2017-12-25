@@ -1,159 +1,160 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.todos</groupId>
-	<artifactId>todos</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+  <groupId>com.todos</groupId>
+  <artifactId>todos</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
-	<name>todos</name>
-	<description>A ToDo&#39;s backend with spring boot!</description>
+  <name>todos</name>
+  <description>A ToDo&#39;s backend with spring boot!</description>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.4.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.5.4.RELEASE</version>
+    <relativePath /> <!-- lookup parent from repository -->
+  </parent>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-	</properties>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>1.8</java.version>
+  </properties>
 
-	<dependencies>	
-		<!-- Spring boot dependencies -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+  <dependencies>
+    <!-- Spring boot dependencies -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-mongodb</artifactId>
-		</dependency>
-		
-		<!-- Spock framework for testing -->
-		<dependency>
-			<groupId>org.spockframework</groupId>
-			<artifactId>spock-spring</artifactId>
-		</dependency>
-		
-		<!-- Groovy for testing -->
-		<dependency>
-		      <groupId>org.codehaus.groovy</groupId>
-		      <artifactId>groovy-all</artifactId>		     
-   		</dependency>
-	
-		<!-- Spock requirement for mocking -->	
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib-nodep</artifactId>
-			<version>3.2.5</version>
-		</dependency>
-		
-		<!-- Lombok to dry code -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-		</dependency>
-		
-		<!-- Fixture Factory to create fake objects for testing -->
-		<dependency>
-			<groupId>br.com.six2six</groupId>
-			<artifactId>fixture-factory</artifactId>
-			<version>3.1.0</version>
-		</dependency>
-		
-		<!-- Jackson for JSON parsing/encoding -->
-		<dependency>
-   			<groupId>com.fasterxml.jackson.datatype</groupId>
-   			<artifactId>jackson-datatype-jsr310</artifactId>
-		</dependency>
-		
-		<!-- In-memory MongoDB for testing -->		
-		<dependency>
-		    <groupId>de.flapdoodle.embed</groupId>
-		    <artifactId>de.flapdoodle.embed.mongo</artifactId>
-		</dependency>
-				
-		<dependency>
-		    <groupId>cz.jirutka.spring</groupId>
-		    <artifactId>embedmongo-spring</artifactId>
-		    <version>RELEASE</version>
-		</dependency>
-					
-		<dependency>
-		  <groupId>com.google.guava</groupId>
-		  <artifactId>guava</artifactId>
-		  <version>23.6-jre</version>
-		</dependency>
-					
-		<!-- MongoDB integration with Spring -->
-		<dependency>
-		   <groupId>org.springframework.boot</groupId>
-		   <artifactId>spring-boot-starter-data-mongodb</artifactId>
-		</dependency>
-	</dependencies>
+    <dependency>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-mongodb</artifactId>
+    </dependency>
 
-	<build>
-		<plugins>			
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-	
-			<!-- GMavenPlus plugin to compile Groovy/Java code together and run tests -->
-			<plugin>
-				<groupId>org.codehaus.gmavenplus</groupId>
-				<artifactId>gmavenplus-plugin</artifactId>
-				<version>1.6</version>
-				<executions>
-					<execution>
-						<goals>
- 			              <goal>addSources</goal>
-			              <goal>addTestSources</goal>
-			              <goal>generateStubs</goal>
-			              <goal>compile</goal>	
-			              <goal>generateTestStubs</goal>
-			              <goal>compileTests</goal>
-			              <goal>removeStubs</goal>
-			              <goal>removeTestStubs</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+    <!-- Spock framework for testing -->
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-spring</artifactId>
+    </dependency>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-			
-			<!-- For testing different groovy test files! -->
-			<plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                		<!-- Outputs test results to console and not to a file -->
-                    <useFile>false</useFile>
-                    <includes>
-                    		<!-- Scans for *Spec and *Test java test files -->
-                    		<!-- Which also works for .groovy files -->
-                        <include>**/*Spec.java</include>
-                        <include>**/*Test.java</include>
-                    </includes>
-                </configuration>
-            </plugin>            
-			
-		</plugins>
-	</build>
+    <!-- Groovy for testing -->
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+    </dependency>
+
+    <!-- Spock requirement for mocking -->
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib-nodep</artifactId>
+      <version>3.2.5</version>
+    </dependency>
+
+    <!-- Lombok to dry code -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+
+    <!-- Fixture Factory to create fake objects for testing -->
+    <dependency>
+      <groupId>br.com.six2six</groupId>
+      <artifactId>fixture-factory</artifactId>
+      <version>3.1.0</version>
+    </dependency>
+
+    <!-- Jackson for JSON parsing/encoding -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+
+    <!-- In-memory MongoDB for testing -->
+    <dependency>
+      <groupId>de.flapdoodle.embed</groupId>
+      <artifactId>de.flapdoodle.embed.mongo</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>cz.jirutka.spring</groupId>
+      <artifactId>embedmongo-spring</artifactId>
+      <version>RELEASE</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>23.6-jre</version>
+    </dependency>
+
+    <!-- MongoDB integration with Spring -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-mongodb</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+
+      <!-- GMavenPlus plugin to compile Groovy/Java code together and run 
+        tests -->
+      <plugin>
+        <groupId>org.codehaus.gmavenplus</groupId>
+        <artifactId>gmavenplus-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>addSources</goal>
+              <goal>addTestSources</goal>
+              <goal>generateStubs</goal>
+              <goal>compile</goal>
+              <goal>generateTestStubs</goal>
+              <goal>compileTests</goal>
+              <goal>removeStubs</goal>
+              <goal>removeTestStubs</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+
+      <!-- For testing different groovy test files! -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- Outputs test results to console and not to a file -->
+          <useFile>false</useFile>
+          <includes>
+            <!-- Scans for *Spec and *Test java test files -->
+            <!-- Which also works for .groovy files -->
+            <include>**/*Spec.java</include>
+            <include>**/*Test.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
 
 </project>
