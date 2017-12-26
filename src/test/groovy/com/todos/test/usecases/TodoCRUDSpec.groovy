@@ -1,14 +1,14 @@
 package com.todos.test.usecases
 
-import spock.lang.*;
+import spock.lang.*
 import com.todos.domain.Todo
 import com.todos.errors.EntityNotFoundException
 import com.todos.repository.TodoRepository
 import com.todos.services.TodoService
 import com.todos.usecases.TodoCRUD
-
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
+import com.todos.test.helpers.TestHelper
 
 /**
 * Unit tests for the CRUD functionalities. Used for TDD development.
@@ -18,31 +18,29 @@ import br.com.six2six.fixturefactory.Rule
 
 class TodoCRUDSpec extends Specification {
 
-    // fields
+    //fields
     TodoService todoService = Mock(TodoService) // mocks service that calls the repository layer
-    TodoCRUD todoCRUD = new TodoCRUD(todoService: todoService)
-
-    // feature methods
+    TodoCRUD todoCRUD = new TodoCRUD(todoService: todoService) // CRUD usecase with mocked service class
     
-    /**
-    * CREATE CRUD operation
+    // feature methods
+        
+   /**
+    * CREATE todo operation
     */
     def "creating a todo" () {
         when: "controller calls todoCRUD.create method"        
-            // dummy todo for database insert                            
-            Todo dummyTodo = getDummyTodo() 
-            
-            Todo createdTodo = todoCRUD.create(dummyTodo)
+            // dummy todo for database insert                                        
+            Todo createdTodo = todoCRUD.create(TestHelper.getDummyTodo())
                             
         then: "should invoke service.create()"        
-            1 * todoService.create(_) >> dummyTodo 
-            
+            1 * todoService.create(_) >> TestHelper.getDummyTodo()
+                         
         and: "service's result should match the createdTodo"
-            matchesDummyTodo(createdTodo)
+            TestHelper.assertTodo(createdTodo, TestHelper.getDummyTodo())                          
     }
         
     /** 
-    * READ operation
+    * READ one todo operation
     */ 
     def "getting one todo by its mongo id" () {    
         when: "controller calls todoCRUD.findById method"
@@ -50,34 +48,52 @@ class TodoCRUDSpec extends Specification {
             String todoId = "1"                                    
             Todo foundTodo = todoCRUD.findById(todoId)
                             
-        then: "should invoke service.findById()"            
-            1 * todoService.findById(_) >> getDummyTodo()
+        then: "should invoke service.findById method"            
+            1 * todoService.findById(_) >> TestHelper.getDummyTodo()
             
         and: "service's result should match the foundTodo"
-            matchesDummyTodo(foundTodo)
-        
-    }
-        
-    // helper methods
-        
-    // helper function to create a dummy todo        
-    def getDummyTodo() {        
-        Fixture.of(Todo.class).addTemplate("test", new Rule() {{
-            add("id", "101"); 
-            add("user", "someone");
-            add("task", "walk the dog");
-            add("completed", false);
-        }});
-                
-        return Fixture.from(Todo.class).gimme("test")        
+            TestHelper.assertTodo(foundTodo, TestHelper.getDummyTodo())        
     }
     
-    // helper function to match a dummy todo
-    void matchesDummyTodo(todo) {
-        assert todo.getId() == "101"
-        assert todo.getUser() == "someone"
-        assert todo.getTask() == "walk the dog"
-        assert todo.isCompleted() == false
+    /**
+     * READ all todos operation.
+     */
+    def "getting all todos in mongo"() {
+        when: "controller calls todoCRUD.findAll method"
+            ArrayList<Todo> todoList = todoCRUD.findAll()
+            
+        then: "should invoke todoService.findAll"
+            1 * todoService.findAll() >> TestHelper.getDummyTodo(3) // creates 3 fake todos
+        
+        and: "service's result should match the list of Todos"
+            TestHelper.assertTodo(todoList, TestHelper.getDummyTodo(3))        
+    }
+
+    /**
+     * DELETE one todo operation
+     */        
+    def "deleting one todo in mongo"() {
+        when: "controller calls todoCRUD.delete"
+            // fake id
+            String todoId = "1"
+            todoCRUD.delete(todoId)
+            
+        then: "should invoke todoService.delete method"
+            1 * todoService.delete(_)   
     }
     
+    /**
+     * UPDATE one todo operation 
+     */
+    def "updating one todo in mongo" () {
+        when: "controller calls todoCRUD.update"
+            Todo todoUpdate = TestHelper.getDummyTodo() // fake Todo update from HTTP body                    
+            Todo updatedTodo = todoCRUD.update(todoUpdate) // fake updated Todo
+            
+        then: "should invoke TodoService.update method"
+            1 * todoService.update(_) >> TestHelper.getDummyTodo()
+        
+        and: "should match the dummy todo"
+            TestHelper.assertTodo(updatedTodo, TestHelper.getDummyTodo())
+    }         
 }
