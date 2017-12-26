@@ -7,15 +7,18 @@ import com.todos.domain.Todo
 import com.todos.test.helpers.TestHelper
 import com.todos.errors.EntityNotFoundException
 
+/**
+* Unit tests for the TodoService class.
+*
+* @author igp
+*/
 class TodoServiceSpec extends Specification {
     
-    // fields
-    TodoRepository todoRepo = Mock(TodoRepository)
-    TodoService todoService = new TodoService(todoRepo: todoRepo)
-    
-    // feature methods
+    TodoRepository todoRepo = Mock(TodoRepository) // mocks repository layer to isolate the functionality of the TodoService class
+    TodoService todoService = new TodoService(todoRepo: todoRepo) // creates new TodoService instance with mocked dependencies
+
     /**
-     * CREATE service
+     * CREATE a todo service.
      */
     def "creating a todo with mongo repository"() {
         when: "todoCRUD invokes todoService.create method"
@@ -27,7 +30,10 @@ class TodoServiceSpec extends Specification {
         and: "assert created todo"
             TestHelper.assertTodo(createdTodo, TestHelper.getDummyTodo())
     }
-        
+    
+    /**
+     * GET one todo service.
+     */        
     def "getting a todo with mongo repository" () {
         // fake id
         String todoId = "1"
@@ -42,6 +48,9 @@ class TodoServiceSpec extends Specification {
            TestHelper.assertTodo(foundTodo, TestHelper.getDummyTodo())                  
     }
     
+    /**
+     * GET one todos service when the todo is not found in mongoDB.
+     */    
     def "getting a todo with mongo repository WITHOUT any results" () {
         String todoId = "1"
         
@@ -55,6 +64,9 @@ class TodoServiceSpec extends Specification {
              thrown EntityNotFoundException
     }
     
+    /**
+     * GET all todos service.
+     */    
     def "getting ALL todos with mongo repository" () {
         // number of dummy todos returned
         def NUMBER_OF_RETURNED_TODOS = 3
@@ -69,6 +81,9 @@ class TodoServiceSpec extends Specification {
            TestHelper.assertTodo(todoList, TestHelper.getDummyTodo(NUMBER_OF_RETURNED_TODOS))                  
     }
     
+    /**
+     * GET all todos service when no todos are found in mongoDB.
+     */      
     def "getting ALL todos with mongo repository WITHOUT any results" () {
         when: "todoCRUD invokes todoService.findById and NO todos are found"
             List<Todo> foundTodo = todoService.findAll()
@@ -80,7 +95,10 @@ class TodoServiceSpec extends Specification {
             
             thrown EntityNotFoundException
     }
-    
+        
+    /**
+     * DELETE one todo service.
+     */  
     def "deleting one todo with mongo repository" () {
         String todoId = "1"
         
@@ -92,6 +110,9 @@ class TodoServiceSpec extends Specification {
             1 * todoRepo.delete(_) 
     }
     
+    /**
+     * DELETE one todos service when the todo is not found in mongoDB.
+     */  
     def "deleting one todo with mongo repository that does NOT exist"() {
         String todoId = "1"
         
@@ -103,7 +124,10 @@ class TodoServiceSpec extends Specification {
              
             thrown EntityNotFoundException
     }
-    
+        
+    /**
+     * UPDATE one todo service.
+     */  
     def "updating one todo with mongo repository" () {
         when: "todoCRUD invokes todoService.update with a todo from a POST payload"
             Todo updatedTodo = todoService.update(TestHelper.getDummyTodo())
@@ -116,6 +140,10 @@ class TodoServiceSpec extends Specification {
             TestHelper.assertTodo(updatedTodo, TestHelper.getDummyTodo())              
     }
     
+        
+    /**
+     * UPDATE one todo service when the todo is not found in mongoDB.
+     */  
     def "updating one todo with mongo repository that does NOT exist"() {
         when: "todoCRUD invokes todoService.update with a todo from a POST payload"
             Todo updatedTodo = todoService.update(TestHelper.getDummyTodo())

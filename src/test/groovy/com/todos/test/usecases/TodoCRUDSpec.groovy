@@ -11,21 +11,17 @@ import br.com.six2six.fixturefactory.Rule
 import com.todos.test.helpers.TestHelper
 
 /**
-* Unit tests for the CRUD functionalities. Used for TDD development.
+* Unit tests for the TodoCRUD class.
 *
 * @author igp
 */
-
 class TodoCRUDSpec extends Specification {
 
-    //fields
-    TodoService todoService = Mock(TodoService) // mocks service that calls the repository layer
-    TodoCRUD todoCRUD = new TodoCRUD(todoService: todoService) // CRUD usecase with mocked service class
-    
-    // feature methods
+    TodoService todoService = Mock(TodoService) // mocks service layer to isolate the functionality of the TodoCRUD class
+    TodoCRUD todoCRUD = new TodoCRUD(todoService: todoService) // creates new TodoCRUD instance with mocked dependencies 
         
    /**
-    * CREATE todo operation
+    * CREATE todo operation.
     */
     def "creating a todo" () {
         when: "controller calls todoCRUD.create method"        
@@ -40,7 +36,7 @@ class TodoCRUDSpec extends Specification {
     }
         
     /** 
-    * READ one todo operation
+    * READ one todo operation.
     */ 
     def "getting one todo by its mongo id" () {    
         when: "controller calls todoCRUD.findById method"
@@ -70,7 +66,7 @@ class TodoCRUDSpec extends Specification {
     }
 
     /**
-     * DELETE one todo operation
+     * DELETE one todo operation.
      */        
     def "deleting one todo in mongo"() {
         when: "controller calls todoCRUD.delete"
@@ -83,7 +79,7 @@ class TodoCRUDSpec extends Specification {
     }
     
     /**
-     * UPDATE one todo operation 
+     * UPDATE one todo operation.
      */
     def "updating one todo in mongo" () {
         when: "controller calls todoCRUD.update"
