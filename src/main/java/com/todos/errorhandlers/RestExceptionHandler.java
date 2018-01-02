@@ -11,6 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import com.todos.errors.ApiError;
 import com.todos.errors.EntityNotFoundException;
+import com.todos.errors.MalformedQueryStringException;
 
 /**
  * Class to handle Exceptions that are thrown by the controllers.
@@ -44,7 +45,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleDataAccessException(DataAccessException ex) {
         String friendlyErrorMsg = "Something's wrong with our database :(";
         
-        ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY, friendlyErrorMsg, ex);
+        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, friendlyErrorMsg, ex);
         
         return buildResponseEntity(apiError);
     }
@@ -57,6 +58,18 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         String friendlyErrorMsg = "Could not find what you were looking for :(";
         
         ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, friendlyErrorMsg, ex);
+        
+        return buildResponseEntity(apiError);
+    }
+    
+    /*
+     * Handles exceptions raised when a wrong query string is passed to a route.
+     */
+    @ExceptionHandler(MalformedQueryStringException.class)
+    protected ResponseEntity<Object> handleMalformedQueryString(MalformedQueryStringException ex) {
+        String friendlyErrorMsg = "Check the query string params and try again :(";
+        
+        ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY, friendlyErrorMsg, ex);
         
         return buildResponseEntity(apiError);
     }

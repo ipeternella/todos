@@ -3,9 +3,13 @@ package com.todos.test.services
 import spock.lang.Specification
 import com.todos.repository.TodoRepository
 import com.todos.services.TodoService
+
+import java.nio.charset.MalformedInputException
+
 import com.todos.domain.Todo
 import com.todos.test.helpers.TestHelper
 import com.todos.errors.EntityNotFoundException
+import com.todos.errors.MalformedQueryStringException
 
 /**
 * Unit tests for the TodoService class.
@@ -34,7 +38,7 @@ class TodoServiceSpec extends Specification {
     /**
      * GET one todo service.
      */        
-    def "getting a todo with mongo repository" () {
+    def "getting a todo with mongo repository"() {
         // fake id
         String todoId = "1"
                 
@@ -51,7 +55,7 @@ class TodoServiceSpec extends Specification {
     /**
      * GET one todos service when the todo is not found in mongoDB.
      */    
-    def "getting a todo with mongo repository WITHOUT any results" () {
+    def "getting a todo with mongo repository WITHOUT any results"() {
         String todoId = "1"
         
         when: "todoCRUD invokes todoService.findById and NO todo is found"
@@ -65,9 +69,9 @@ class TodoServiceSpec extends Specification {
     }
     
     /**
-     * GET all todos service.
+     * GET all todos service (no username filter).
      */    
-    def "getting ALL todos with mongo repository" () {
+    def "getting ALL todos with mongo repository"() {
         // number of dummy todos returned
         def NUMBER_OF_RETURNED_TODOS = 3
                 
@@ -79,12 +83,12 @@ class TodoServiceSpec extends Specification {
             
         and: "assert found todo"
            TestHelper.assertTodo(todoList, TestHelper.getDummyTodo(NUMBER_OF_RETURNED_TODOS))                  
-    }
+    }    
     
     /**
-     * GET all todos service when no todos are found in mongoDB.
+     * GET all todos service when no todos are found in mongoDB (no username filter).
      */      
-    def "getting ALL todos with mongo repository WITHOUT any results" () {
+    def "getting ALL todos with mongo repository WITHOUT any results"() {
         when: "todoCRUD invokes todoService.findById and NO todos are found"
             List<Todo> foundTodo = todoService.findAll()
             
@@ -95,11 +99,67 @@ class TodoServiceSpec extends Specification {
             
             thrown EntityNotFoundException
     }
+                
+    /**
+     * GET all todos service filtered by a username.
+     */    
+    def "getting ALL todos with mongo repository filtered by a username"() {
+        HashMap<String, String> qryStrParams = new HashMap<String, String>()
+        qryStrParams.putAt("userName", "someone")
         
+        // number of dummy todos returned
+        int NUMBER_OF_RETURNED_TODOS = 3
+                
+        when: "todoCRUD invokes todoService.findByUser with the query string params"
+            List<Todo> todoList = todoService.findByUser(qryStrParams)
+            
+        then: "should invoke todoRepo.findByUser and return 3 dummy Todos"
+            1 * todoRepo.findByUser(_) >> TestHelper.getDummyTodo(NUMBER_OF_RETURNED_TODOS)            
+            
+        and: "assert found todo"
+           TestHelper.assertTodo(todoList, TestHelper.getDummyTodo(NUMBER_OF_RETURNED_TODOS))                  
+    }
+    
+    /**
+     * GET all todos service filtered by a username when a malformed query string is passed.
+     */    
+    def "getting ALL todos with mongo repository with a malformed query string"() {
+        HashMap<String, String> qryStrParams = new HashMap<String, String>()
+        qryStrParams.putAt("wrongParamName", "someone") // query string with a wrong parameter name
+        
+        // number of dummy todos returned        
+        def NUMBER_OF_RETURNED_TODOS = 3
+                
+        when: "todoCRUD invokes todoService.findByUser with a wrong query string parameter name"
+            List<Todo> todoList = todoService.findByUser(qryStrParams)
+            
+        then: "should throw MalformedInputException due to the unknown query string parameter"                        
+            thrown MalformedQueryStringException 
+    }
+    
+    /**
+     * GET all todos service filtered by a username when the username does NOT exist.
+     */    
+    def "getting ALL todos with mongo repository filtered by a username when it does NOT exist"() {
+        HashMap<String, String> qryStrParams = new HashMap<String, String>()
+        qryStrParams.putAt("userName", "someone") // appropriate parameter name
+        
+        // number of dummy todos returned        
+        def NUMBER_OF_RETURNED_TODOS = 3
+                
+        when: "todoCRUD invokes todoService.findByUser"
+            List<Todo> todoList = todoService.findByUser(qryStrParams)
+            
+        then: "should throw MalformedInputException due to the unknown query string parameter"
+            1 * todoRepo.findByUser(_) >> new ArrayList<Todo>() // empty list (no todos for the given userName of the query string)            
+            
+            thrown EntityNotFoundException 
+    }
+    
     /**
      * DELETE one todo service.
      */  
-    def "deleting one todo with mongo repository" () {
+    def "deleting one todo with mongo repository"() {
         String todoId = "1"
         
         when: "todoCRUD invokes todoService.delete"
@@ -128,7 +188,7 @@ class TodoServiceSpec extends Specification {
     /**
      * UPDATE one todo service.
      */  
-    def "updating one todo with mongo repository" () {
+    def "updating one todo with mongo repository"() {
         when: "todoCRUD invokes todoService.update with a todo from a POST payload"
             Todo updatedTodo = todoService.update(TestHelper.getDummyTodo())
             
@@ -153,5 +213,5 @@ class TodoServiceSpec extends Specification {
             
             thrown EntityNotFoundException        
     }
-    
+ 
 }

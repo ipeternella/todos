@@ -1,12 +1,14 @@
 package com.todos.usecases;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import com.todos.domain.Todo;
 import com.todos.errors.EntityNotFoundException;
+import com.todos.errors.MalformedQueryStringException;
 import com.todos.services.TodoService;
 
 /**
@@ -41,12 +43,20 @@ public class TodoCRUD {
                 
         return foundTodo;
     }
-    
+
     /*
-     * READ all todos operation.
+     * READ all todos operation. Accepts a userName from a query string to filter results by a user.
      */    
-    public List<Todo> findAll() throws DataAccessException, EntityNotFoundException {
-        List<Todo> todoList = todoService.findAll();
+    public List<Todo> findAll(Map<String, String> qryStrParams) throws DataAccessException, EntityNotFoundException, MalformedQueryStringException {
+        List<Todo> todoList;
+        
+        if (qryStrParams.isEmpty()) {
+            // invokes service.findAll method when no query string params are found in the request
+            todoList = todoService.findAll();
+        } else {
+            // invokes findByUser with the query param userName or throws an exception if such parameter is not found
+            todoList = todoService.findByUser(qryStrParams);
+        }
         
         return todoList;
     }
@@ -67,4 +77,5 @@ public class TodoCRUD {
         
         return updatedTodo;
     }
+    
 }

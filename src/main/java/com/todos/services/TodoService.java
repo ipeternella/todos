@@ -1,11 +1,14 @@
 package com.todos.services;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import com.todos.domain.Todo;
 import com.todos.errors.EntityNotFoundException;
+import com.todos.errors.MalformedQueryStringException;
 import com.todos.repository.TodoRepository;
 
 /**
@@ -71,6 +74,45 @@ public class TodoService {
         }
     }
     
+    /**
+     * Read-all-todos-of-a-user service. 
+     */
+    public List<Todo> findByUser(Map<String, String> qryStrParams) throws DataAccessException, EntityNotFoundException, MalformedQueryStringException {         
+        // array list to store necessary query string params
+        ArrayList<String> requiredParams = new ArrayList<String>();
+        
+        // this service requires a userName param which is supplied in a query string
+        requiredParams.add("userName");
+        
+        try {
+            // checks if any unexpected query string params are present (anything that is not the parameter userName)
+            ArrayList<String> unexpectedParams = getUnexpectedQryStrParams(qryStrParams, requiredParams);
+            
+            // throws custom exception with error 422 if an unexpected param has been found
+            if (!unexpectedParams.isEmpty()) {
+                throw new MalformedQueryStringException("Could not process the request with unexpected query string params: " + unexpectedParams);
+            }
+            
+            // if all query string params are okay, proceeds to find all todos in mongoDB from the user
+            List<Todo> todoList = todoRepo.findByUser(qryStrParams.get("userName"));
+            
+            // throws custom exception if no todo was found in mongoDB for that user 
+            if (todoList.isEmpty()) {
+                throw new EntityNotFoundException("No todos found in the database for the user: " + qryStrParams.get("userName") + ". Maybe he's not busy?");
+            }
+            
+            return todoList;
+            
+        } catch (DataAccessException e) {
+            
+            // logs database-related exception
+            System.out.println("[ERROR]: " + e.getMessage());
+            
+            // proceeds to throw the exception
+            throw(e);        
+        }
+    }
+    
     /*
      * Read-all todo service.
      */    
@@ -87,7 +129,7 @@ public class TodoService {
             
             return todoList;
             
-        } catch (DataAccessException e) {
+         } catch (DataAccessException e) {
             
             // logs database-related exception
             System.out.println("[ERROR]: " + e.getMessage());
@@ -155,4 +197,22 @@ public class TodoService {
             throw(e);
         }        
     }
+
+    /*
+     * Helper method to validate wrong query parameters sent via HTTP requests. Returns all an ArrayList of unexpected parameters.
+     */
+    private ArrayList<String> getUnexpectedQryStrParams(Map<String, String> qryStrParams, ArrayList<String> requiredParams) {         
+        // ArrayList to hold unexpected query string params
+        ArrayList<String> unexpectedParams = new ArrayList<String>();
+                        
+        for (String param : qryStrParams.keySet()) {
+            // adds the parameter if its not a required (expected) one
+            if (!requiredParams.contains(param)) {
+                unexpectedParams.add(param);
+            }
+        }
+        
+        return unexpectedParams;
+    }
+    
 }
