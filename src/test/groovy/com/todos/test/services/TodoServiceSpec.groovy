@@ -116,7 +116,7 @@ class TodoServiceSpec extends Specification {
         then: "should invoke todoRepo.findByUser and return 3 dummy Todos"
             1 * todoRepo.findByUser(_) >> TestHelper.getDummyTodo(NUMBER_OF_RETURNED_TODOS)            
             
-        and: "assert found todo"
+        and: "assert found todos"
            TestHelper.assertTodo(todoList, TestHelper.getDummyTodo(NUMBER_OF_RETURNED_TODOS))                  
     }
     
@@ -133,7 +133,7 @@ class TodoServiceSpec extends Specification {
         when: "todoCRUD invokes todoService.findByUser with a wrong query string parameter name"
             List<Todo> todoList = todoService.findByUser(qryStrParams)
             
-        then: "should throw MalformedInputException due to the unknown query string parameter"                        
+        then: "should throw MalformedQueryStringException due to the unknown query string parameter"                        
             thrown MalformedQueryStringException 
     }
     
@@ -150,7 +150,7 @@ class TodoServiceSpec extends Specification {
         when: "todoCRUD invokes todoService.findByUser"
             List<Todo> todoList = todoService.findByUser(qryStrParams)
             
-        then: "should throw MalformedInputException due to the unknown query string parameter"
+        then: "should try to find the todos of the given user but fails and throws an EntityNotFoundException"
             1 * todoRepo.findByUser(_) >> new ArrayList<Todo>() // empty list (no todos for the given userName of the query string)            
             
             thrown EntityNotFoundException 
