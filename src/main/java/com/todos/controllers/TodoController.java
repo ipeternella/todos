@@ -2,7 +2,6 @@ package com.todos.controllers;
 
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -25,64 +24,92 @@ import com.todos.usecases.TodoCRUD;
  *
  * @author igp
  */
+
 @RestController
-@RequestMapping(value = "/todos")
+@RequestMapping(value = "api/todos")
 public class TodoController {
 
     @Autowired private TodoCRUD todoCRUD;
 
-    /*
-     * CREATE (CRUD) endpoint.
+    /**
+     * Create a todo endpoint.
+     * 
+     * @param inputTodo a todo instance created from an HTTP POST payload
+     * @return JSON of the created todo with a 201 HTTP status if it was successful 
+     * @throws DataAccessException if a database connection problem happens
+     *  which is handled to send a JSON with a 500 HTTP status to the client 
+     * @throws HttpMessageNotReadableException if a malformed JSON is sent by the client
+     *  which is handled to send a JSON with a 400 HTTP status to the client
      */
     @RequestMapping(method = RequestMethod.POST,
                     consumes = MediaType.APPLICATION_JSON_VALUE,
                     produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Todo> create(@RequestBody Todo inputTodo)
             throws DataAccessException, HttpMessageNotReadableException {
-        // usecase to perform the create operation of the todo
-        // malformed JSONs will throw HttpMessageNotReadableException which is handled by the error
-        // handler
+        // creates a new todo or throws and HttpMessageNotReadableException if a malformed JSON is received 
         Todo createdTodo = todoCRUD.create(inputTodo);
 
-        // logging
+        // logs the newly created todo
         System.out.println("[LOG] Created Todo in the database: " + createdTodo);
 
         // if the operation was successful, returns the newly created todo
         return new ResponseEntity<>(createdTodo, HttpStatus.CREATED);
     }
 
-    /*
-     * READ one (CRUD) endpoint.
+    /**
+     * Read one todo by its id endpoint.
+     * 
+     * @param todoId a path variable String which holds the id of the todo
+     * @return JSON of the found todo with a 200 HTTP status
+     * @throws DataAccessException if a database connection problem happens
+     *  which is handled to send a JSON with a 500 HTTP status to the client
+     * @throws EntityNotFoundException if no todo was found for the given id
+     *  which is handled to send a JSON with a 404 HTTP status to the client
      */
     @RequestMapping(value = "/{todoId}",
                     method = RequestMethod.GET,
                     produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Todo> findById(@PathVariable(value = "todoId") String todoId)
             throws DataAccessException, EntityNotFoundException {
-        // usecase to perform the read operation based on the id given by the path variable
-        // throws custom EntityNotFoundException to return 404 http status if no todo was found in
-        // mongoDB
+        // finds the todo
         Todo foundTodo = todoCRUD.findById(todoId);
 
         // if the operation was successful, returns the found todo
         return new ResponseEntity<>(foundTodo, HttpStatus.OK);
     }
-
-    /*
-     * Read All (CRUD) endpoint. Accepts an optional userName query string parameter to filter results by the user.
+    
+    /**
+     * Reads all the todos in MongoDB endpoint. 
+     * Optionally accepts a query string with the parameter userName to filter the results by a user name.
+     * 
+     * @param qryStrParams a Map implementation which can be null (no query string) or contain the "userName" key
+     * @return JSON with the list of found todos with a 200 HTTP status
+     * @throws DataAccessException if a database connection problem happens
+     *  which is handled to send a JSON with a 500 HTTP status to the client
+     * @throws EntityNotFoundException if no todo was found for the given id
+     *  which is handled to send a JSON with a 404 HTTP status to the client 
+     * @throws MalformedQueryStringException if any query string parameter other than "userName" was sent
+     *  which is handled to send a JSON with a 422 HTTP status to the client
      */
     @RequestMapping(method = RequestMethod.GET,
                     produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Todo>> findAll(@RequestParam Map<String, String> qryStrParams) throws DataAccessException, EntityNotFoundException, MalformedQueryStringException {
-        // usecase to read all the todos that are stored in mongoDB
-        // optionally filtered by a username
-        List<Todo> todoList = todoCRUD.findAll(qryStrParams); // query string params can be null
+        // finds all todos 
+        // query string parameters can be an empty Map (no username filter)
+        List<Todo> todoList = todoCRUD.findAll(qryStrParams); 
 
         return new ResponseEntity<>(todoList, HttpStatus.OK);
     }
 
-    /*
-     * Delete (CRUD) endpoint.
+    /**
+     * Deletes one todo endpoint.
+     * 
+     * @param todoId a path variable String which holds the id of the todo
+     * @return an empty JSON
+     * @throws DataAccessException if a database connection problem happens
+     *  which is handled to send a JSON with a 500 HTTP status to the client
+     * @throws EntityNotFoundException if no todo was found for the given id
+     *  which is handled to send a JSON with a 404 HTTP status to the client 
      */
     @RequestMapping(value = "/{todoId}",
                     method = RequestMethod.DELETE,
@@ -97,8 +124,15 @@ public class TodoController {
         return new ResponseEntity<String>("", HttpStatus.NO_CONTENT);
     }
 
-    /*
-     * Update (CRUD) endpoint.
+    /**
+     * Updates one todo endpoint.
+     * 
+     * @param todoUpdate a todo instance created from HTTP PUT payload
+     * @return JSON with the updated todo with a 200 HTTP status
+     * @throws DataAccessException if a database connection problem happens
+     *  which is handled to send a JSON with a 500 HTTP status to the client
+     * @throws EntityNotFoundException if no todo was found for the given id
+     *  which is handled to send a JSON with a 404 HTTP status to the client
      */
     @RequestMapping(method = RequestMethod.PUT,
                     produces = MediaType.APPLICATION_JSON_VALUE)

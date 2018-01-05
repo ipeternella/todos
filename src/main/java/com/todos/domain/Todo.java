@@ -15,7 +15,6 @@ import lombok.ToString;
  * @author igp
  */
 
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -27,7 +26,6 @@ public class Todo {
     
     @Id
     private String id; // _id field for mongoDB
-
     private String user;
     private String task;
     private boolean completed;

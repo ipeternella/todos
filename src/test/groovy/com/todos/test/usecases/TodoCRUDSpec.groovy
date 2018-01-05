@@ -3,6 +3,7 @@ package com.todos.test.usecases
  import spock.lang.*
 import com.todos.domain.Todo
 import com.todos.errors.EntityNotFoundException
+import com.todos.errors.MalformedQueryStringException
 import com.todos.repository.TodoRepository
 import com.todos.services.TodoService
 import com.todos.usecases.TodoCRUD
@@ -59,12 +60,31 @@ class TodoCRUDSpec extends Specification {
         HashMap<String, String> qryStrParams = new HashMap<String, String>()
         qryStrParams.putAt("userName", "someone")
         
-        when: "controller calls todoCRUD.findAll method with a query string"
+        List<String> expectedParams = Arrays.asList("userName")
+        
+        when: "controller calls todoCRUD.findAll method with a query string an no exception is thrown"
             List<Todo> todoList = todoCRUD.findAll(qryStrParams);
             
         then: "should invoke todoService.findByUser"
             1 * todoService.findByUser(_) >> TestHelper.getDummyTodo(3) // returns a list of todos
     }
+    
+    /**
+     * READ all todos (of a specific user) operation when a malformed query string is passed.
+     */
+    def "getting on todo in mongo by its user with a malformed query string"() {
+        HashMap<String, String> qryStrParams = new HashMap<String, String>()
+        qryStrParams.putAt("unexpectedParamName", "someone")
+        
+        List<String> expectedParams = Arrays.asList("userName")
+        
+        when: "controller calls todoCRUD.findAll method with a malformed query string"
+            List<Todo> todoList = todoCRUD.findAll(qryStrParams);
+            
+        then: "should throw MalformedQueryStringException"
+            thrown MalformedQueryStringException
+    }
+    
     
     /**
      * READ all todos operation.

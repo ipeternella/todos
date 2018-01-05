@@ -1,14 +1,11 @@
 package com.todos.services;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import com.todos.domain.Todo;
 import com.todos.errors.EntityNotFoundException;
-import com.todos.errors.MalformedQueryStringException;
 import com.todos.repository.TodoRepository;
 
 /**
@@ -23,9 +20,13 @@ public class TodoService {
 
     @Autowired
     private TodoRepository todoRepo;
-    
-    /*
-     * Create todo service. 
+
+    /**
+     * Creates a new todo.
+     * 
+     * @param todo a todo instance created from an HTTP POST payload
+     * @return createdTodo a newly created todo
+     * @throws DataAccessException if a database connection problem happens
      */
     public Todo create(Todo todo) throws DataAccessException {        
         try {
@@ -38,7 +39,7 @@ public class TodoService {
             
             return createdTodo;
             
-        } catch (DataAccessException e) { // catches database-related exceptions
+        } catch (DataAccessException e) {
             
             // logs database-related exception
             System.out.println("[ERROR]: " + e.getMessage());
@@ -48,16 +49,21 @@ public class TodoService {
         }         
     }
 
-    /*
-     * Read-one todo service.
+    /**
+     * Reads one todo by its MongoDB id.
+     * 
+     * @param todoId
+     * @return foundTodo a todo found by its id
+     * @throws DataAccessException if a database connection problem happens
+     * @throws EntityNotFoundException if no todo was found for the given id
      */
     public Todo findById(String todoId) throws DataAccessException, EntityNotFoundException {
         try {
             
-            // finds todo based on the path variable id
+            // finds a todo by its id
             Todo foundTodo = todoRepo.findOne(todoId);            
             
-            // throws custom exception if no todo was found in mongoDB to return a 404 http status
+            // if no todo was found, throws EntityNotFoundException to send a 404 http status
             if (foundTodo == null) {
                 throw new EntityNotFoundException("Todo was not found in the database with the id: " + todoId);
             }
@@ -75,30 +81,21 @@ public class TodoService {
     }
     
     /**
-     * Read-all-todos-of-a-user service. 
+     * Reads all the todos in MongoDB of a given user.
+     * 
+     * @param userName a username paramter sent in a query string
+     * @return todoList a list of todos that belongs to a specific user
+     * @throws DataAccessException if a database connection problem happens
+     * @throws EntityNotFoundException if no todos are found for a given user
      */
-    public List<Todo> findByUser(Map<String, String> qryStrParams) throws DataAccessException, EntityNotFoundException, MalformedQueryStringException {         
-        // array list to store necessary query string params
-        ArrayList<String> requiredParams = new ArrayList<String>();
-        
-        // this service requires a userName param which is supplied in a query string
-        requiredParams.add("userName");
-        
+    public List<Todo> findByUser(String userName) throws DataAccessException, EntityNotFoundException {         
         try {
-            // checks if any unexpected query string params are present (anything that is not the parameter userName)
-            ArrayList<String> unexpectedParams = getUnexpectedQryStrParams(qryStrParams, requiredParams);
+            // finds all the todos for a given user
+            List<Todo> todoList = todoRepo.findByUser(userName);
             
-            // throws custom exception with error 422 if an unexpected param has been found
-            if (!unexpectedParams.isEmpty()) {
-                throw new MalformedQueryStringException("Could not process the request with unexpected query string params: " + unexpectedParams);
-            }
-            
-            // if all query string params are okay, proceeds to find all todos in mongoDB from the user
-            List<Todo> todoList = todoRepo.findByUser(qryStrParams.get("userName"));
-            
-            // throws custom exception if no todo was found in mongoDB for that user 
+            // if no todos were found for that user, throws EntityNotFoundException to send a 404 http status
             if (todoList.isEmpty()) {
-                throw new EntityNotFoundException("No todos found in the database for the user: " + qryStrParams.get("userName") + ". Maybe he's not busy?");
+                throw new EntityNotFoundException("No todos found in the database for the user: " + userName + ". Maybe he's not busy?");
             }
             
             return todoList;
@@ -112,17 +109,21 @@ public class TodoService {
             throw(e);        
         }
     }
-    
-    /*
-     * Read-all todo service.
-     */    
+
+    /**
+     * Reads all the todos. No filtering by username.
+     *  
+     * @return todoList a list of all todos found in the database
+     * @throws DataAccessException if a database connection problem happens
+     * @throws EntityNotFoundException if no todos are found in the database
+     */
     public List<Todo> findAll() throws DataAccessException, EntityNotFoundException {
         try {
-            
-            // finds all todos in mongoDB
+
+            // finds all the todos in mongoDB
             List<Todo> todoList = todoRepo.findAll();
             
-            // throws custom exception if no todo was found in mongoDB to return 404 http status 
+            // if no todos were found in the database, throws EntityNotFoundException
             if (todoList.isEmpty()) {
                 throw new EntityNotFoundException("No todos found in the database, don't you have anything to do?");
             }            
@@ -139,22 +140,29 @@ public class TodoService {
         }
     }
     
-    /*
-     * Delete todo service.
+    /**
+     * Deletes one todo by its id.
+     * 
+     * @param todoId a String which contains the id of the todo to be deleted
+     * @throws DataAccessException if a database connection problem happens
+     * @throws EntityNotFoundException if no todo was found to be deleted with the given id
      */
     public void delete(String todoId) throws DataAccessException, EntityNotFoundException {
         try {
+            
             // finds the todo
             Todo toBeDeleted = todoRepo.findOne(todoId);
             
-            // checks if the todo really exists
-            // if the it doesn't, throws custom exception if no todo was found in mongoDB to return 404 http status
+            // if the todo cannot be found, throws EntityNotFoundException to send a 404 http status
             if (toBeDeleted == null) {
                 throw new EntityNotFoundException("No todo was found to be deleted :(");
             }
             
-            // deletes the todo
+            // if the todo was found, deletes the todo
             todoRepo.delete(toBeDeleted);
+            
+            // logs
+            System.out.println("[LOG]: " + " deleted todo: " + toBeDeleted);
             
         } catch (DataAccessException e) {
             
@@ -165,9 +173,14 @@ public class TodoService {
             throw(e);
         }        
     }
-    
-    /*
-     * Update todo service.
+
+    /**
+     * Updates one todo by its id.
+     * 
+     * @param todoUpdate a todo instance create from an HTTP PUT payload which holds the new data to update the id 
+     * @return todoUpdate the newly updated todo
+     * @throws DataAccessException if a database connection problem happens
+     * @throws EntityNotFoundException if no todo to be updated was found
      */
     public Todo update(Todo todoUpdate) throws DataAccessException, EntityNotFoundException {
         try {
@@ -180,7 +193,7 @@ public class TodoService {
                 throw new EntityNotFoundException("Todo was not found to be updated :(");
             }
             
-            // updates the todo by executing an upsert in mongoDB
+            // updates the todo by executing an upsert in MongoDB
             todoRepo.save(todoUpdate);
             
             // logs the updated todo
@@ -198,21 +211,5 @@ public class TodoService {
         }        
     }
 
-    /*
-     * Helper method to validate wrong query parameters sent via HTTP requests. Returns all an ArrayList of unexpected parameters.
-     */
-    private ArrayList<String> getUnexpectedQryStrParams(Map<String, String> qryStrParams, ArrayList<String> requiredParams) {         
-        // ArrayList to hold unexpected query string params
-        ArrayList<String> unexpectedParams = new ArrayList<String>();
-                        
-        for (String param : qryStrParams.keySet()) {
-            // adds the parameter if its not a required (expected) one
-            if (!requiredParams.contains(param)) {
-                unexpectedParams.add(param);
-            }
-        }
-        
-        return unexpectedParams;
-    }
-    
+
 }
