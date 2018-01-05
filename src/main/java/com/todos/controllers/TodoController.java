@@ -105,7 +105,7 @@ public class TodoController {
      * Deletes one todo endpoint.
      * 
      * @param todoId a path variable String which holds the id of the todo
-     * @return an empty JSON
+     * @return an empty JSON with a 204 http status
      * @throws DataAccessException if a database connection problem happens
      *  which is handled to send a JSON with a 500 HTTP status to the client
      * @throws EntityNotFoundException if no todo was found for the given id
